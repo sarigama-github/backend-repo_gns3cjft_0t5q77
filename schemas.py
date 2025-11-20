@@ -11,10 +11,11 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, Literal
+from datetime import datetime
 
-# Example schemas (replace with your own):
+# Example schemas (kept for reference):
 
 class User(BaseModel):
     """
@@ -37,6 +38,28 @@ class Product(BaseModel):
     price: float = Field(..., ge=0, description="Price in dollars")
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
+
+# Reverb Music Academy schemas
+
+LessonInstrument = Literal["Guitar", "Kanto", "Piano", "Drums"]
+
+class Booking(BaseModel):
+    """
+    Lesson bookings for Reverb Music Academy
+    Collection name: "booking"
+    """
+    name: str = Field(..., min_length=2, max_length=100, description="Student full name")
+    email: EmailStr = Field(..., description="Contact email")
+    phone: Optional[str] = Field(None, max_length=30, description="Contact phone number")
+    instrument: LessonInstrument = Field(..., description="Instrument/discipline for the lesson")
+    preferred_date: str = Field(..., description="Preferred date (YYYY-MM-DD)")
+    preferred_time: str = Field(..., description="Preferred time (HH:MM)")
+    message: Optional[str] = Field(None, max_length=1000, description="Additional notes or goals")
+    teacher: Optional[str] = Field(None, max_length=100, description="Preferred teacher if any")
+    source: Optional[str] = Field("website", description="Where the booking came from")
+    status: Literal["pending", "confirmed", "cancelled"] = Field("pending", description="Booking status")
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 # Add your own schemas here:
 # --------------------------------------------------
